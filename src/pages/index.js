@@ -1,5 +1,15 @@
-import Arrow from '../assets/icon-arrow.svg';
 import { useState, useEffect } from 'react';
+
+import dynamic from 'next/dynamic';
+import { toast } from 'react-toastify';
+
+import Arrow from '../assets/icon-arrow.svg';
+
+import Loader from '../components/Loader';
+const Map = dynamic(() => import('../components/Map'), {
+  ssr: false,
+});
+
 import {
   Container,
   SearchSection,
@@ -9,6 +19,8 @@ import {
 
 export default function Home() {
   const test = true;
+
+  const [ipAddress, setIpAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResult] = useState({});
 
@@ -36,7 +48,51 @@ export default function Home() {
     getInitialData();
   }, []);
 
-  async function handleSubmit() {}
+  async function handleSubmit() {
+    if (!ipAddress) return;
+
+    try {
+      setLoading(true);
+
+      if (
+        /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+          ipAddress
+        )
+      ) {
+        const response = await fetch(
+          `https://geo.ipify.org/api/v1?apiKey=${apiKey}&ipAddress=${ipAddress}`
+        );
+
+        const data = await response.json();
+        if (response.status !== 200) throw new Error();
+
+        setResult(data);
+      } else {
+        const response = await fetch(
+          `https://geo.ipify.org/api/v1?apiKey=${apiKey}&domain=${ipAddress}`
+        );
+
+        const data = await response.json();
+        if (response.status !== 200) throw new Error();
+
+        setResult(data);
+      }
+    } catch (err) {
+      toast.error(
+        'An error occurred while search for this IP or domain! Please try again'
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    toast.warn('Please disable ADBlock for the application to work normally', {
+      autoClose: '10000',
+    });
+  }, []);
+
+  const defaultPosition = [-23.55052, -46.633306];
 
   return (
     <Container>
@@ -44,9 +100,14 @@ export default function Home() {
         <h2>IP Address Tracker</h2>
 
         <div>
-          <input type="text" placeholder="Search" />
-          <button>
-            <Arrow />
+          <input
+            type="text"
+            value={ipAddress}
+            onChange={({ target }) => setIpAddress(target.value)}
+            placeholder="Search"
+          />
+          <button disable={!!loading} onClick={handleSubmit}>
+            {loading ? <Loader /> : <Arrow />}
           </button>
         </div>
 
@@ -89,7 +150,16 @@ export default function Home() {
         )}
       </SearchSection>
 
-      <MapContainer />
+      <MapContainer loading={loading}>
+        <Map
+          defaultPosition={defaultPosition}
+          location={
+            results.location
+              ? [results.location.lat, results.location.lng]
+              : defaultPosition
+          }
+        />
+      </MapContainer>
     </Container>
   );
 }

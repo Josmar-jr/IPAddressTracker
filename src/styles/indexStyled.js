@@ -5,7 +5,11 @@ export const Container = styled.main`
   grid-template-rows: 2.5fr 4fr;
   width: 100vw;
   height: 100vh;
+  .leaflet-container {
+    z-index: 100;
+  }
 `;
+
 export const SearchSection = styled.main`
   width: 100%;
   height: 100%;
@@ -23,14 +27,14 @@ export const SearchSection = styled.main`
     color: #fff;
     font-weight: 500;
     margin-top: ${(props) => (props.result ? '3rem' : '0')};
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
   }
 
   > div {
     display: flex;
     align-items: center;
     transition: 0.5s ease;
-    margin-bottom: ${(props) => (props.results ? '3rem' : '0')};
+    margin-bottom: ${(props) => (props.results ? '-3rem' : '0')};
 
     input {
       border: none;
@@ -69,6 +73,31 @@ export const SearchSection = styled.main`
       }
     }
   }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.8rem;
+      margin: 2rem 0;
+    }
+
+    > div {
+      input {
+        padding: 1rem;
+        font-size: 0.9rem;
+        width: calc(80vw - 4rem);
+      }
+    }
+  }
+
+  @media (max-width: 500px) {
+    > div input {
+      width: calc(90vw - 4rem);
+
+      &::placeholder {
+        font-size: 1.7rem;
+      }
+    }
+  }
 `;
 export const SearchInfos = styled.main`
   background: #fff;
@@ -81,6 +110,11 @@ export const SearchInfos = styled.main`
   padding: 1rem;
 
   animation: fadeUp 0.5s ease-in-out forwards;
+
+  @media (max-width: 768px) {
+    bottom: -165px;
+    padding: 0;
+  }
   @keyframes fadeUp {
     0% {
       transform: translateY(0px);
@@ -114,6 +148,13 @@ export const SearchInfos = styled.main`
       color: var(--gray900);
     }
 
+    @media (max-width: 1280px) {
+      width: 90vw;
+      p {
+        font-size: 1.5rem;
+      }
+    }
+
     li + li {
       margin-left: 3rem;
       position: relative;
@@ -135,9 +176,47 @@ export const SearchInfos = styled.main`
         transform: translate(-50%, -50%);
       }
     }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 80vw;
+      padding: 2rem;
+
+      p {
+        font-size: 1.5rem;
+      }
+
+      li + li {
+        padding-top: 1.3rem;
+        margin: 0;
+
+        div {
+          padding: 0;
+        }
+
+        &:before {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 500px) {
+    width: 90vw;
+    padding: 1.5rem;
   }
 `;
 export const MapContainer = styled.main`
   width: 100%;
   background: #ccc;
+
+  pointer-events: ${({ loading }) => (loading ? 'none' : 'auto')};
+  z-index: 1;
+
+  .leaflet-top {
+    top: initial;
+    bottom: 1rem;
+  }
 `;
