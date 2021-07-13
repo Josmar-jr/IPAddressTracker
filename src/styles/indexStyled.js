@@ -107,8 +107,6 @@ export const SearchInfos = styled.main`
   -webkit-box-sizing: 0px 7px 17px 0px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 7px 17px 0px rgba(0, 0, 0, 0.2);
 
-  padding: 1rem;
-
   animation: fadeUp 0.5s ease-in-out forwards;
 
   @media (max-width: 768px) {
@@ -143,7 +141,7 @@ export const SearchInfos = styled.main`
     }
 
     p {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 500;
       color: var(--gray900);
     }

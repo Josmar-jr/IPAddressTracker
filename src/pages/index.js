@@ -18,8 +18,6 @@ import {
 } from '../styles/indexStyled';
 
 export default function Home() {
-  const test = true;
-
   const [ipAddress, setIpAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResult] = useState({});
